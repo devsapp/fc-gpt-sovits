@@ -1,0 +1,103 @@
+edition: 3.0.0
+name: hello-world-app
+# access 是当前应用所需要的密钥信息配置：
+# 密钥配置可以参考：https://manual.serverless-devs.com/user-guide/builtin/config/
+# 密钥使用顺序可以参考：https://manual.serverless-devs.com/dev-guide/cli_design/#_11
+access: '{{ access }}'
+vars:
+  region: '{{ region }}'
+  functionName: '{{ functionName }}'
+  download_path: '/mnt/${vars.functionName}'
+template:
+  SoVITS-Template:
+    internetAccess: true
+    vpcConfig: auto
+resources:
+  run-gpt-sovits:
+    component: fc3
+    props:
+      region: ${vars.region}
+      handler: index.handler
+      description: GPT-SoVITS Webui 服务
+      timeout: 7200
+      gpuConfig:
+        gpuMemorySize: 16384
+        gpuType: fc.gpu.tesla.1
+      customContainerConfig:
+        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:v3'
+        webServerMode: true
+        entrypoint:
+          - python
+        command:
+          - webui.py
+        port: 9874
+      instanceType: c1
+      runtime: custom-container
+      instanceConcurrency: 10
+      cpu: 8
+      memorySize: 32768
+      diskSize: 10240
+      environmentVariables:
+        TOKENIZERS_PARALLELISM: 'true'
+        download_path: ${vars.download_path}
+      functionName: '${vars.functionName}'
+      nasConfig: auto
+    extend:
+      name: SoVITS-Template
+  
+  gpt-sovits-api:
+    component: fc3
+    props:
+      region: ${vars.region}
+      handler: index.handler
+      description: GPT-SoVITS API 服务
+      timeout: 7200
+      gpuConfig:
+        gpuMemorySize: 16384
+        gpuType: fc.gpu.tesla.1
+      customContainerConfig:
+        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:fast_infer'
+        webServerMode: true
+        entrypoint:
+          - python
+        command:
+          - api_v3.py
+        port: 9880
+      instanceType: c1
+      runtime: custom-container
+      instanceConcurrency: 10
+      cpu: 8
+      memorySize: 16384
+      diskSize: 10240
+      environmentVariables:
+        is_half: 'False'
+        TOKENIZERS_PARALLELISM: 'true'
+        download_path: ${vars.download_path}
+      functionName: '${vars.functionName}__api'
+      nasConfig: auto
+      triggers:
+        - triggerName: httpTrigger
+          triggerType: http
+          qualifier: LATEST
+          triggerConfig:
+            authType: anonymous
+            disableURLInternet: false
+            methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+    extend:
+      name: SoVITS-Template
+    
+  gpt-sovits-service-domain:
+    component: fc3-domain
+    props:
+      region: ${vars.region}
+      domainName: auto
+      protocol: HTTP
+      routeConfig:
+        routes:
+          - path: /*
+            functionName: ${vars.functionName}

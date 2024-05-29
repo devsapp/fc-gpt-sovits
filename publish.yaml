@@ -1,0 +1,38 @@
+Edition: 3.0.0
+Type: Project
+Name: fc-gpt-sovits
+Version: 0.1.7
+Provider:
+  - 阿里云 
+Description: FC版GPT-SoVITS项目部署模版
+HomePage: https://www.serverless-devs.com
+Tags: 
+  - AI
+  - 人工智能
+Category: 人工智能 
+Service:
+  函数计算:
+    Runtime: custom
+    Authorities:
+      - 创建函数
+Organization: 阿里云函数计算（FC） 
+Effective: Public 
+Parameters:
+  type: object
+  additionalProperties: false 
+  required: 
+    - region
+    - functionName
+  properties:
+    region:
+      title: 地域
+      type: string
+      default: cn-hangzhou
+      description: 创建应用所在的地区
+      enum:
+        - cn-hangzhou
+    functionName:
+      title: 函数名称
+      type: string
+      default: gpt-sovits-${default-suffix}
+      description: 应用函数名称
