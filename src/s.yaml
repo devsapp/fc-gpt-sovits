@@ -12,6 +12,11 @@ template:
   SoVITS-Template:
     internetAccess: true
     vpcConfig: auto
+flow:
+  deploy:
+    - [run-gpt-sovits, gpt-sovits-api]
+    - [gpt-sovits-service-domain]
+
 resources:
   run-gpt-sovits:
     component: fc3
@@ -24,7 +29,7 @@ resources:
         gpuMemorySize: 16384
         gpuType: fc.gpu.tesla.1
       customContainerConfig:
-        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:v3'
+        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:v4'
         webServerMode: true
         entrypoint:
           - python
