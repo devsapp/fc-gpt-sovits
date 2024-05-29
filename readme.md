@@ -22,7 +22,8 @@ FC版GPT-SoVITS项目部署模版
 
 <codeUrl>
 
-- [:smiley_cat: 代码](https://code.alibaba-inc.com/serverless-devs/fc-gpt-sovits)
+- [:smiley_cat: 应用模版](https://github.com/devsapp/fc-gpt-sovits)
+- [:smiley_cat: 镜像代码](https://github.com/zxypro1/GPT-SoVITS)
 
 </codeUrl>
 <preview>
