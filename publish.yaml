@@ -1,10 +1,10 @@
 Edition: 3.0.0
 Type: Project
-Name: fc-gpt-sovits
-Version: 0.1.10
+Name: fc-gpt-sovits-v2
+Version: 0.0.1
 Provider:
   - 阿里云 
-Description: FC版GPT-SoVITS项目部署模版。可实现高质量TTS（Text to Speech）文字到语音生成和快速语音克隆。
+Description: FC版GPT-SoVITS项目部署模版的V2版更新，推理更快，效果更好。可实现高质量TTS（Text to Speech）文字到语音生成和快速语音克隆。
 HomePage: https://www.serverless-devs.com
 Tags: 
   - AI
@@ -34,5 +34,5 @@ Parameters:
     functionName:
       title: 函数名称
       type: string
-      default: gpt-sovits-${default-suffix}
+      default: gpt-sovits-v2-${default-suffix}
       description: 应用函数名称

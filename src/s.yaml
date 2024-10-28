@@ -23,19 +23,19 @@ resources:
     props:
       region: ${vars.region}
       handler: index.handler
-      description: GPT-SoVITS Webui 服务
+      description: GPT-SoVITS-V2 Webui 服务
       timeout: 7200
       gpuConfig:
         gpuMemorySize: 16384
         gpuType: fc.gpu.tesla.1
       customContainerConfig:
-        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:v5'
+        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:V2_base'
         webServerMode: true
         entrypoint:
           - python
         command:
-          - webui.py
-        port: 9874
+          - GPT_SoVITS/inference_webui_fast.py
+        port: 9872
       instanceType: c1
       runtime: custom-container
       instanceConcurrency: 10
@@ -55,18 +55,18 @@ resources:
     props:
       region: ${vars.region}
       handler: index.handler
-      description: GPT-SoVITS API 服务
+      description: GPT-SoVITS-V2 API 服务
       timeout: 7200
       gpuConfig:
         gpuMemorySize: 16384
         gpuType: fc.gpu.tesla.1
       customContainerConfig:
-        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:fast_infer'
+        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:V2_base'
         webServerMode: true
         entrypoint:
           - python
         command:
-          - api_v3.py
+          - api_v2.py
         port: 9880
       instanceType: c1
       runtime: custom-container
