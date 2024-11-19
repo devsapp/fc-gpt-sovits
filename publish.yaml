@@ -1,7 +1,7 @@
 Edition: 3.0.0
 Type: Project
 Name: fc-gpt-sovits-v2
-Version: 0.0.2
+Version: dev
 Provider:
   - 阿里云 
 Description: FC版GPT-SoVITS项目部署模版的V2版更新，推理更快，效果更好。可实现高质量TTS（Text to Speech）文字到语音生成和快速语音克隆。
@@ -36,3 +36,19 @@ Parameters:
       type: string
       default: gpt-sovits-v2-${default-suffix}
       description: 应用函数名称
+    inferBucketName:
+      title: 推理API OSS存储桶名
+      type: string
+      default: ""
+      description: OSS存储桶名(注意和函数同地域)
+      x-bucket:
+        dependency:
+          - region
+    trainBucketName:
+      title: 训练API OSS存储桶名
+      type: string
+      default: ""
+      description: OSS存储桶名(注意和函数同地域)
+      x-bucket:
+        dependency:
+          - region

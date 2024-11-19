@@ -12,6 +12,7 @@ template:
   SoVITS-Template:
     internetAccess: true
     vpcConfig: auto
+    nasConfig: auto
 flow:
   deploy:
     - [run-gpt-sovits, gpt-sovits-api]
@@ -29,7 +30,7 @@ resources:
         gpuMemorySize: 16384
         gpuType: fc.gpu.tesla.1
       customContainerConfig:
-        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:V2_base'
+        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:v2-0.0.1'
         webServerMode: true
         entrypoint:
           - python
@@ -46,7 +47,6 @@ resources:
         TOKENIZERS_PARALLELISM: 'true'
         download_path: ${vars.download_path}
       functionName: '${vars.functionName}'
-      nasConfig: auto
     extend:
       name: SoVITS-Template
   
@@ -55,13 +55,13 @@ resources:
     props:
       region: ${vars.region}
       handler: index.handler
-      description: GPT-SoVITS-V2 API 服务
+      description: GPT-SoVITS-V2 推理 API 服务
       timeout: 7200
       gpuConfig:
         gpuMemorySize: 16384
         gpuType: fc.gpu.tesla.1
       customContainerConfig:
-        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:V2_base'
+        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:v2-0.0.1'
         webServerMode: true
         entrypoint:
           - python
@@ -78,8 +78,7 @@ resources:
         is_half: 'False'
         TOKENIZERS_PARALLELISM: 'true'
         download_path: ${vars.download_path}
-      functionName: '${vars.functionName}__api'
-      nasConfig: auto
+      functionName: '${vars.functionName}__infer_api'
       triggers:
         - triggerName: httpTrigger
           triggerType: http
@@ -93,6 +92,67 @@ resources:
               - PUT
               - DELETE
               - OPTIONS
+      {{if inferBucketName != '' }}
+      ossMountConfig:
+        mountPoints:
+          - bucketName: '{{inferBucketName}}'
+            bucketPath: /
+            endpoint: http://oss-${vars.region}.aliyuncs.com
+            mountDir: /mnt/oss/
+      {{/if}}
+    extend:
+      name: SoVITS-Template
+  
+  gpt-sovits-train-api:
+    component: fc3
+    props:
+      region: ${vars.region}
+      handler: index.handler
+      description: GPT-SoVITS-V2 训练 API 服务
+      timeout: 7200
+      gpuConfig:
+        gpuMemorySize: 16384
+        gpuType: fc.gpu.tesla.1
+      customContainerConfig:
+        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:v2-0.0.1'
+        webServerMode: true
+        entrypoint:
+          - python
+        command:
+          - train_api.py
+        port: 9881
+      instanceType: c1
+      runtime: custom-container
+      instanceConcurrency: 10
+      cpu: 8
+      memorySize: 16384
+      diskSize: 10240
+      environmentVariables:
+        is_half: 'False'
+        TOKENIZERS_PARALLELISM: 'true'
+        download_path: ${vars.download_path}
+      functionName: '${vars.functionName}__train_api'
+      triggers:
+        - triggerName: httpTrigger
+          triggerType: http
+          qualifier: LATEST
+          triggerConfig:
+            authType: anonymous
+            disableURLInternet: false
+            methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+      {{if trainBucketName != '' }}
+      ossMountConfig:
+        mountPoints:
+          - bucketName: '{{trainBucketName}}'
+            bucketPath: /
+            endpoint: http://oss-${vars.region}.aliyuncs.com
+            mountDir: /mnt/oss/
+      {{/if}}
     extend:
       name: SoVITS-Template
     
