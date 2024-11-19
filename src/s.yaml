@@ -15,7 +15,7 @@ template:
     nasConfig: auto
 flow:
   deploy:
-    - [run-gpt-sovits, gpt-sovits-api]
+    - [run-gpt-sovits, gpt-sovits-api, gpt-sovits-train-api]
     - [gpt-sovits-service-domain]
 
 resources:
