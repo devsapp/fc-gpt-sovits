@@ -12,18 +12,19 @@ template:
   SoVITS-Template:
     internetAccess: true
     vpcConfig: auto
-    nasConfig: auto
 flow:
   deploy:
-    - [run-gpt-sovits, gpt-sovits-api, gpt-sovits-train-api]
+    - [gpt-sovits-webui]
+    - [gpt-sovits-api, gpt-sovits-train-api]
     - [gpt-sovits-service-domain]
 
 resources:
-  run-gpt-sovits:
+  gpt-sovits-webui:
     component: fc3
     props:
       region: ${vars.region}
       handler: index.handler
+      nasConfig: auto
       description: GPT-SoVITS-V2 Webui 服务
       timeout: 7200
       gpuConfig:
@@ -55,6 +56,7 @@ resources:
     props:
       region: ${vars.region}
       handler: index.handler
+      nasConfig: ${resources.gpt-sovits-webui.output.nasConfig}
       description: GPT-SoVITS-V2 推理 API 服务
       timeout: 7200
       gpuConfig:
@@ -110,6 +112,7 @@ resources:
       handler: index.handler
       description: GPT-SoVITS-V2 训练 API 服务
       timeout: 7200
+      nasConfig: ${resources.gpt-sovits-webui.output.nasConfig}
       gpuConfig:
         gpuMemorySize: 16384
         gpuType: fc.gpu.tesla.1
