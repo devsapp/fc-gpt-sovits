@@ -1,7 +1,7 @@
 Edition: 3.0.0
 Type: Project
 Name: fc-gpt-sovits-v2
-Version: dev
+Version: 0.0.3
 Provider:
   - 阿里云 
 Description: FC版GPT-SoVITS项目部署模版的V2版更新，推理更快，效果更好。可实现高质量TTS（Text to Speech）文字到语音生成和快速语音克隆。
