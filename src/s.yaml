@@ -117,7 +117,7 @@ resources:
         gpuMemorySize: 16384
         gpuType: fc.gpu.tesla.1
       customContainerConfig:
-        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:v2-0.0.2'
+        image: 'registry.${vars.region}.aliyuncs.com/zxy-dev/gpt-sovits:v2-0.0.3'
         webServerMode: true
         entrypoint:
           - python
